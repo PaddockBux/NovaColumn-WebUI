@@ -1,0 +1,137 @@
+/* Init font */
+@font-face {
+    font-family: 'MyFont';
+    src: url('Monocraft.otf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    image-rendering: pixelated; /* Pixel rendering because... gross */
+    font-family: 'Monocraft';
+    color: white;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('dirt.png');
+    background-blend-mode: darken;
+}
+
+/* MOTD */
+.motdbox {
+    border: 3px solid #2c0863;
+    outline: 2px solid #1f083a;
+    background-color: #1f083a;
+    border-radius: 2px;
+    padding: 5px;
+    display: inline-block;
+}
+
+/* Button wrapper */
+.button-wrapper {
+    font-family: 'Monocraft';
+    position: relative;
+    display: inline-block;
+    image-rendering: pixelated;
+    background-image: url('button.png');
+    width: 300px;
+    height: 30px;
+    background-size: cover;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.button-wrapper:hover {
+    color: yellow;
+    background-image: url('hilight.png');
+}
+
+.button-wrapper:active {
+    background-image: url('no.png');
+}
+
+.button-wrapper span {
+    white-space: nowrap;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+.button-wrapper:hover span {
+    color: rgb(255 255 127);
+}
+
+/* Main wrapper */
+.wrapper {
+    padding: 30px;
+    background-color: rgba(0, 0, 0, 0.3);
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    width: 40%;
+    height: 40%;
+}
+
+.wrapper img {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    height: 70%;
+}
+
+/* Uuid text */
+.uuid {
+    font-size: 8px;
+    font-weight: bold;
+}
+
+/* Link recoloring */
+a:link {
+    color: rgb(134, 239, 255);
+    background-color: transparent;
+    text-decoration: none;
+}
+
+a:visited {
+    color: rgb(255, 65, 97);
+    background-color: transparent;
+    text-decoration: none;
+}
+
+a:hover {
+    color: rgb(110, 255, 78);
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+a:active {
+    color: white;
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+/* New styles for uniform list display */
+#serverInfo, #playersList, .motdbox {
+    margin: 10px 0;
+    text-align: left;
+    max-width: 400px;
+    width: 100%;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin: 5px 0;
+}

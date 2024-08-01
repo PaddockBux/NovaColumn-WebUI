@@ -6,8 +6,21 @@
         <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
+        <link rel="stylesheet" href="assets/style.css">
     </head>
     <body>
+        <!-- <button id="fetchButton">Fetch Data</button> -->
+        <!-- <div id="dataDisplay"></div> -->
+        <div class="wrapper">
+            <button class="button-wrapper" id="findServerButton">
+                <span>Find Random Server</span>
+            </button>
+            <!-- <h1><a href="#" target="_blank" rel="noopener noreferrer" id="textToCopy"></a></h1> -->
+            <button class="button-wrapper" id="copyButton"><span>Copy IP</span></button>
+            <div id="serverInfo"></div>
+            <ul id="playersList"></ul>
+            <p class="motdbox" id="motd"></p>
+        </div>
+        <script src="fetch.js"></script>
     </body>
 </html>
