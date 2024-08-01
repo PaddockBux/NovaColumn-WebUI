@@ -1,32 +1,87 @@
 /* Init font */
 @font-face {
-    font-family: 'MyFont';
-    src: url('Monocraft.otf') format('truetype');
-    font-weight: normal;
+    font-family: Minecraft;
     font-style: normal;
+    font-weight: 400;
+    src: url("https://cdn.jsdelivr.net/gh/nailujx86/Minecraft-Webfont-and-Colors@v1.0/font/minecraft_font.woff") format("woff"),url(https://cdn.jsdelivr.net/gh/nailujx86/Minecraft-Webfont-and-Colors@v1.0/font/minecraft_font.eot) format("eot"),url(https://cdn.jsdelivr.net/gh/nailujx86/Minecraft-Webfont-and-Colors@v1.0/font/minecraft_font.ttf) format("truetype"),url(https://cdn.jsdelivr.net/gh/nailujx86/Minecraft-Webfont-and-Colors@v1.0/font/minecraft_font.svg#Minecraft) format("svg");
 }
 
 body {
-    image-rendering: pixelated; /* Pixel rendering because... gross */
-    font-family: 'Monocraft';
+    image-rendering: pixelated;
+    /* Pixel rendering because... gross */
+    font-family: 'Minecraft';
     color: white;
     background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('dirt.png');
     background-blend-mode: darken;
 }
 
-/* MOTD */
+/* MOTD & IP*/
 .motdbox {
     border: 3px solid #2c0863;
     outline: 2px solid #1f083a;
     background-color: #1f083a;
+    width: fit-content;
     border-radius: 2px;
     padding: 5px;
     display: inline-block;
+    text-shadow: 2px 0px black;
+    
+    margin: 10px 0;
+    text-align: left;
+    width: fit-content;
+}
+
+.ip {
+    font-size: 30pt;
+    padding-top: 10px;
+    text-shadow: 5px 0px black;
+}
+
+.infotext {
+    text-shadow: 2px 0px black;
+}
+
+.verIndent {
+    color: lightgray;
+    border: rgb(38, 38, 38) solid 2px;
+    outline: rgb(63, 63, 63) solid 2px;
+    padding: 3px;
+    border-radius: 2px;
+    background-color: black;
+}
+
+.verContainer {
+    padding-top: 4px;
+    padding-bottom: 10px;
+}
+
+.help {
+    all: unset;
+    color: turquoise;
+    font-family: 'Minecraft';
+    padding-left: 6px;
+    font-size: 12px;
+    cursor: help;
+    text-shadow: 1.5px 0px black;
+}
+
+.playerlist {
+    background-color: black;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 8px;
+    width: fit-content;
+    height: fit-content;
+}
+
+.misc {
+    margin: 0;
 }
 
 /* Button wrapper */
 .button-wrapper {
-    font-family: 'Monocraft';
+    color: white;
+    font-family: 'Minecraft';
     position: relative;
     display: inline-block;
     image-rendering: pixelated;
@@ -39,12 +94,10 @@ body {
     text-align: center;
     vertical-align: middle;
 }
-
 .button-wrapper:hover {
     color: yellow;
     background-image: url('hilight.png');
 }
-
 .button-wrapper:active {
     background-image: url('no.png');
 }
@@ -56,10 +109,10 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     color: white;
-    font-size: 16px;
+    font-size: 12px;
     pointer-events: none;
+    text-shadow: 1.5px 0px black;
 }
-
 .button-wrapper:hover span {
     color: rgb(255 255 127);
 }
@@ -67,7 +120,7 @@ body {
 /* Main wrapper */
 .wrapper {
     padding: 30px;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.6);
     margin: auto;
     position: absolute;
     top: 0;
@@ -76,22 +129,16 @@ body {
     bottom: 0;
     display: flex;
     flex-direction: column;
-    align-items: left;
-    width: 40%;
-    height: 40%;
-}
-
-.wrapper img {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    height: 70%;
+    text-align: left;
+    height: fit-content;
+    width: fit-content;
+    overflow: auto;
 }
 
 /* Uuid text */
 .uuid {
     font-size: 8px;
-    font-weight: bold;
+    color: darkgray;
 }
 
 /* Link recoloring */
@@ -100,38 +147,25 @@ a:link {
     background-color: transparent;
     text-decoration: none;
 }
-
 a:visited {
     color: rgb(255, 65, 97);
     background-color: transparent;
     text-decoration: none;
 }
-
 a:hover {
     color: rgb(110, 255, 78);
     background-color: transparent;
     text-decoration: underline;
 }
-
 a:active {
     color: white;
     background-color: transparent;
     text-decoration: underline;
 }
 
-/* New styles for uniform list display */
-#serverInfo, #playersList, .motdbox {
-    margin: 10px 0;
-    text-align: left;
-    max-width: 400px;
-    width: 100%;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    margin: 5px 0;
+.icon   {
+    width: 200px;
+    color: red;
+    font-style: italic;
+    height: auto;
 }

@@ -1,5 +1,7 @@
 import json
+import ast
 import time
+from datetime import datetime
 from collections import defaultdict
 import random
 import mariadb
@@ -9,7 +11,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 requests_data = defaultdict(list)
-RATE_LIMIT = 10  # requests
+RATE_LIMIT = 1000  # requests
 TIME_WINDOW = 60  # seconds
 
 @app.before_request
@@ -49,10 +51,19 @@ def get_main():
     # (114, 40, 25579, 1722446968.5482442, 0, 10, 3, 2, '[]', 1, 20, 146.869)
     jsonout = {}
     jsonout['port'] = req[2]
-    jsonout['time'] = req[3]
+    jsonout['time'] = datetime.fromtimestamp(req[3]).strftime('%Y-%m-%d %H:%M:%S')
     jsonout['playercount'] = req[4]
     jsonout['playermax'] = req[5]
-    jsonout['players'] = json.loads(req[8])
+    jsonout['players'] = ast.literal_eval(req[8])
+    username = []
+    userid = []
+    for player in jsonout['players']:
+        cursor.execute(f"SELECT username FROM playernames WHERE uid = {player}")
+        username.append(cursor.fetchone()[0])
+        cursor.execute(f"SELECT userid FROM playernames WHERE uid = {player}")
+        userid.append(cursor.fetchone()[0])
+    jsonout['players'] = username
+    jsonout['playersid'] = userid
     jsonout['signed'] = req[9]
     jsonout['ping'] = req[11]
 
@@ -64,8 +75,8 @@ def get_main():
     jsonout['version'] = cursor.fetchone()[0]
     cursor.execute(f"SELECT data FROM icons WHERE uid = {req[10]}")
     jsonout['icon'] = cursor.fetchone()[0]
-
+    print(jsonout)
     return jsonify(jsonout)
 
 if __name__ == '__main__':
-   app.run(host="0.0.0.0")
+   app.run(host="0.0.0.0", port="5000")

@@ -1,0 +1,87 @@
+@font-face {
+	font-family: "Minecraft";
+	font-style: normal;
+	font-weight: 400;
+    src: url("https://cdn.jsdelivr.net/gh/nailujx86/Minecraft-Webfont-and-Colors@v1.0/font/minecraft_font.woff") format("woff"), 
+         url("https://cdn.jsdelivr.net/gh/nailujx86/Minecraft-Webfont-and-Colors@v1.0/font/minecraft_font.eot") format("eot"),  
+	     url("https://cdn.jsdelivr.net/gh/nailujx86/Minecraft-Webfont-and-Colors@v1.0/font/minecraft_font.ttf") format("truetype"), 
+	     url("https://cdn.jsdelivr.net/gh/nailujx86/Minecraft-Webfont-and-Colors@v1.0/font/minecraft_font.svg#Minecraft") format("svg");
+}
+.mc {
+    font-family: Minecraft;
+    color: white;
+}
+.mc_black {
+    color: black;
+}
+.mc_dark_blue {
+    color: #0000AA;
+}
+.mc_dark_green {
+    color: #00AA00;
+}
+.mc_dark_aqua {
+    color: #00AAAA;
+}
+.mc_dark_red {
+    color: #AA0000;
+}
+.mc_dark_purple {
+    color: #AA00AA;
+}
+.mc_gold {
+    color: #FFAA00;
+}
+.mc_gray {
+    color: #AAAAAA;
+}
+.mc_dark_gray {
+    color: #555555;
+}
+.mc_blue {
+    color: #5555FF;
+}
+.mc_green {
+    color: #55FF55;
+}
+.mc_aqua {
+    color: #55FFFF;
+}
+.mc_red {
+    color: #FF5555;
+}
+.mc_light_purple {
+    color: #FF55FF;
+}
+.mc_yellow {
+    color: #FFFF55;
+}
+.mc_white {
+    color: white;
+}
+.mc_bold {
+    font-weight: bold;
+}
+.mc_italic {
+    font-style: italic;
+}
+.mc_strikethrough, .mc_underlined {
+    position: relative;
+    display: inline-block;
+}
+.mc_strikethrough::before, .mc_underlined::after {
+    content: '';
+    width: 100%;
+    position: absolute;
+    right: 0;
+}
+.mc_strikethrough::before {
+    border-bottom: 2px solid;
+    border-bottom-color: inherit;
+    top: 55%;
+}
+.mc_underlined::after {
+    border-bottom: 2px solid;
+    border-bottom-color: inherit;
+    bottom: -8%;
+}

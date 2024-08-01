@@ -3,24 +3,109 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
+        <title>Nova Corpulousification</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="assets/style.css">
+        <link rel="stylesheet" href="assets/mcmotd.css">
+        <link rel="shortcut icon" href="assets/nova.png" type="image/x-icon">
+        <script src="https://cdn.jsdelivr.net/gh/nailujx86/mcmotdparser@master/dist/motdparserweb.js" type="text/javascript"></script>
     </head>
     <body>
-        <!-- <button id="fetchButton">Fetch Data</button> -->
-        <!-- <div id="dataDisplay"></div> -->
         <div class="wrapper">
-            <button class="button-wrapper" id="findServerButton">
-                <span>Find Random Server</span>
-            </button>
-            <!-- <h1><a href="#" target="_blank" rel="noopener noreferrer" id="textToCopy"></a></h1> -->
-            <button class="button-wrapper" id="copyButton"><span>Copy IP</span></button>
-            <div id="serverInfo"></div>
-            <ul id="playersList"></ul>
-            <p class="motdbox" id="motd"></p>
+            <button class="button-wrapper" id="findServerButton" onclick="update(); play();"><span>Find Random Server</span></button>
+            <a class="ip" id="displayIP" href="https://mcsrvstat.us/server/"></a>
+            <p class="verContainer"><span id="displayVer" class="verIndent"></span><a title="The version of Minecraft the server is using." id="verHelp" class="help">&nbsp;(?)</a></p>
+            <button onclick="copy(); play();" class="button-wrapper" id="copyButton"><span>Copy IP</span></button>
+            <div class="motdbox" id="motd"></div>
+            <div class="playerlist" id="plist">
+                <a id="username" style="display: none" href="https://namemc.com/profile/"></a>
+                <span id="userID" style="display: none" class="uuid"></span>
+            </div>
+            <div class="infotext">
+                <p id="playerCount">Playercount: </p>
+                <p id="signed">Reporting: </p>
+                <p id="date">Scanned on: </p>
+            </div>
+            <img id="icon" src="" alt="Broken icon!" class="icon">
+            <script>
+                async function play() {
+                    new Audio("assets/click.ogg").play();
+                }
+                var list = document.getElementById("plist");
+                var usernamebase = document.getElementById("username").cloneNode(true);
+                var useridbase = document.getElementById("userID").cloneNode(true);
+                function copy() {
+                    var ip = document.getElementById("displayIP").innerHTML;
+                    navigator.clipboard.writeText(ip);
+                    var button = document.getElementById("copyButton");
+                    button.innerHTML = "<span>Copied!</span>";
+                    setTimeout(function()   {
+                        button.innerHTML = "<span>Copy IP</span>";
+                    }, 500)
+                };
+                function addplayer(usernamestring, uuid)  {
+                    var username = usernamebase.cloneNode(true);
+                    var userid = useridbase.cloneNode(true);
+                    username.style.display = "inline-block";
+                    userid.style.display = "inline-block";
+                    username.innerHTML = usernamestring;
+                    username.href += usernamestring;
+                    userid.innerHTML = "(" + uuid + ")";
+                    userid.id = "";
+                    username.id = "";
+                    list.appendChild(username);
+                    list.appendChild(document.createElement("br"));
+                    list.appendChild(userid);
+                    list.appendChild(document.createElement("br"));
+                    list.appendChild(document.createElement("br"));
+                };
+                function clearplayers() {
+                    list.innerHTML = "<br>";
+                };
+                function update()   {
+                    fetch("http://192.168.1.230:5000/api/main").then(function(response) {
+                        if(!response.ok)    {
+                            throw new Error("API not ok");
+                        }
+                        return response.json();
+                    }).then(function(data)  {
+                        clearplayers();
+                        var icon = document.getElementById("icon");
+                        if(data.icon == "NO_ICON")  {
+                            data.icon = "assets/pack.png";
+                        }
+                        icon.src = data.icon;
+                        var ip = document.getElementById("displayIP");
+                        var formatted = data.ip + ":" + data.port;
+                        ip.innerHTML = formatted;
+                        ip.href = "https://mcsrvstat.us/server/" + formatted;
+                        var version = document.getElementById("displayVer");
+                        version.innerHTML = data.version;
+                        var motd = document.getElementById("motd");
+                        motdParser.toHtml(data.motd, function(error, response)  {
+                            motd.innerHTML = response;
+                        });
+                        var players = data.players;
+                        var uuids = data.playersid;
+                        if(players.length == 0) {
+                            addplayer("NO_PLAYERS", "00000000-0000-0000-0000-000000000000")
+                        }
+                        for(var i = 0; i < players.length; i++) {
+                            addplayer(players[i], uuids[i]);
+                        }
+                        var playercount = document.getElementById("playerCount");
+                        playercount.innerHTML = "Playercount: " + data.playercount + "/" + data.playermax;
+                        var signed = document.getElementById("signed");
+                        signed.innerHTML = "Reporting: " + ((data.signed == 1) ? "Enabled" : "Disabled");
+                        var date = document.getElementById("date");
+                        date.innerHTML = "Scanned on: " + data.time;
+                    }).catch(function(error)    {
+                        throw new Error("Parsing error");
+                    });
+                };
+                update();
+            </script>
         </div>
-        <script src="fetch.js"></script>
     </body>
 </html>
