@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Nova Corpulousification</title>
+        <title>NovaColumn</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="assets/style.css">
@@ -13,21 +13,21 @@
     </head>
     <body>
         <div class="wrapper">
-            <button class="button-wrapper" id="findServerButton" onclick="update(); play();"><span>Find Random Server</span></button>
-            <a class="ip" id="displayIP" href="https://mcsrvstat.us/server/"></a>
-            <p class="verContainer"><span id="displayVer" class="verIndent"></span><a title="The version of Minecraft the server is using." id="verHelp" class="help">&nbsp;(?)</a></p>
-            <button onclick="copy(); play();" class="button-wrapper" id="copyButton"><span>Copy IP</span></button>
-            <div class="motdbox" id="motd"></div>
-            <div class="playerlist" id="plist">
-                <a id="username" style="display: none" href="https://namemc.com/profile/"></a>
-                <span id="userID" style="display: none" class="uuid"></span>
+            <div class="button-container">
+                <button class="button-wrapper spacer" id="findServerButton" onclick="update(); play();"><span>Find Random Server</span></button>
+                <button onclick="copy(); play();" class="button-wrapper" id="copyButton"><span>Copy IP</span></button>
             </div>
-            <div class="infotext">
-                <p id="playerCount">Playercount: </p>
-                <p id="signed">Reporting: </p>
-                <p id="date">Scanned on: </p>
+            <div class="ipdisplayer">
+                <a class="ip" id="displayIP" href="https://mcsrvstat.us/server/" target="_blank">Unavailable</a><p class="ping" id="displayPing">(Unavailable)</p>
+            </div>
+            <p class="verContainer"><span id="displayVer" class="verIndent">Unavailable</span><a title="The version of Minecraft the server is using." id="verHelp" class="help">&nbsp;(?)</a></p>
+            <p class="center" id="playerCount">Playercount: Unavailable</p>
+            <div class="playerlist" id="plist">
+                <a id="username" style="display: none" href="https://namemc.com/profile/" target="_blank">Unavailable</a>
+                <span id="userID" style="display: none" class="uuid">Unavailable</span>
             </div>
             <img id="icon" src="" alt="Broken icon!" class="icon">
+            <div class="motdbox" id="motd">Unavailable</div>
             <script>
                 async function play() {
                     new Audio("assets/click.ogg").play();
@@ -82,6 +82,8 @@
                         ip.href = "https://mcsrvstat.us/server/" + formatted;
                         var version = document.getElementById("displayVer");
                         version.innerHTML = data.version;
+                        var ping = document.getElementById("displayPing");
+                        ping.innerHTML = "(" + data.ping + "ms" + ")";
                         var motd = document.getElementById("motd");
                         motdParser.toHtml(data.motd, function(error, response)  {
                             motd.innerHTML = response;
@@ -106,6 +108,11 @@
                 };
                 update();
             </script>
+            <div class="infotext">
+                <p class="left" id="signed">Reporting: Unavailable</p><a title="On left: Reporting is for Signed Messages, used to report players in-game." class="help">(?)</a>
+                <p class="right" id="date">Scanned on: Unavailable</p>
+            </div>
         </div>
+        <a href="about"><img src="assets/DiamondBlock.png" class="about" alt="About"></a>
     </body>
 </html>

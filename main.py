@@ -36,7 +36,6 @@ try:
         host="localhost",
         port=3306,
         database="novadevel_main"
-
     )
 except mariadb.Error as e:
     print(f"Error connecting to MariaDB Platform: {e}")
@@ -46,7 +45,9 @@ def get_main():
     cursor = conn.cursor()
     cursor.execute("SELECT MAX(uid) FROM main")
     maxrange = cursor.fetchone()[0]
-    cursor.execute(f"SELECT * FROM main WHERE uid = {random.randrange(0, maxrange)}")
+    rand = random.randrange(0, maxrange)
+    print(f"Getting UID {rand}")
+    cursor.execute(f"SELECT * FROM main WHERE uid = {rand}")
     req = cursor.fetchone()
     # (114, 40, 25579, 1722446968.5482442, 0, 10, 3, 2, '[]', 1, 20, 146.869)
     jsonout = {}
@@ -75,7 +76,7 @@ def get_main():
     jsonout['version'] = cursor.fetchone()[0]
     cursor.execute(f"SELECT data FROM icons WHERE uid = {req[10]}")
     jsonout['icon'] = cursor.fetchone()[0]
-    print(jsonout)
+    print(f"Gave data:\n{jsonout['icon'][:40]}...\n{jsonout['ip']}\n{jsonout['motd']}\n{jsonout['ping']}\n{jsonout['playercount']}\n{jsonout['playermax']}\n{jsonout['players']}\n{jsonout['playersid']}\n{jsonout['port']}\n{jsonout['signed']}\n{jsonout['time']}\n{jsonout['version']}")
     return jsonify(jsonout)
 
 if __name__ == '__main__':
