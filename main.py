@@ -1,4 +1,3 @@
-import json
 import ast
 import time
 from datetime import datetime
@@ -11,7 +10,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 requests_data = defaultdict(list)
-RATE_LIMIT = 1000  # requests
+RATE_LIMIT = 100 # requests
 TIME_WINDOW = 60  # seconds
 
 @app.before_request
@@ -80,4 +79,4 @@ def get_main():
     return jsonify(jsonout)
 
 if __name__ == '__main__':
-   app.run(host="0.0.0.0", port="5000")
+   app.run()
