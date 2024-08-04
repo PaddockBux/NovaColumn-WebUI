@@ -64,7 +64,7 @@
                     list.innerHTML = "<br>";
                 };
                 function update()   {
-                    fetch("http://192.168.1.230:5000/api/main").then(function(response) {
+                    fetch("https://api.novacolumn.com").then(function(response) {
                         if(!response.ok)    {
                             throw new Error("API not ok");
                         }

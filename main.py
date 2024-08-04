@@ -1,32 +1,12 @@
 import ast
-import time
 from datetime import datetime
-from collections import defaultdict
 import random
 import mariadb
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
-requests_data = defaultdict(list)
-RATE_LIMIT = 100 # requests
-TIME_WINDOW = 60  # seconds
-
-@app.before_request
-def limit_remote_addr():
-    ip = request.remote_addr
-    requests = requests_data[ip]
-    now = time.time()
-
-    # Filter out old requests
-    requests = [req for req in requests if req > now - TIME_WINDOW]
-    requests_data[ip] = requests
-
-    if len(requests) >= RATE_LIMIT:
-        return jsonify({"error": "rate limit exceeded"}), 429
-
-    requests.append(now)
 
 try:
     conn = mariadb.connect(
@@ -34,12 +14,12 @@ try:
         password="",
         host="localhost",
         port=3306,
-        database="novadevel_main"
+        database="novacolumn"
     )
 except mariadb.Error as e:
     print(f"Error connecting to MariaDB Platform: {e}")
 
-@app.route('/api/main', methods=['GET'])
+@app.route('/', methods=['GET'])
 def get_main():
     cursor = conn.cursor()
     cursor.execute("SELECT MAX(uid) FROM main")
