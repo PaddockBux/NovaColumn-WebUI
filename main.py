@@ -3,6 +3,7 @@ from datetime import datetime
 import random
 import mariadb
 from flask import Flask, jsonify
+import cherrypy
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -16,6 +17,7 @@ try:
         port=3306,
         database="novacolumn"
     )
+    print("Successfully connected MariaDB.")
 except mariadb.Error as e:
     print(f"Error connecting to MariaDB Platform: {e}")
 
@@ -24,7 +26,7 @@ def get_main():
     cursor = conn.cursor()
     cursor.execute("SELECT MAX(uid) FROM main")
     maxrange = cursor.fetchone()[0]
-    rand = random.randrange(0, maxrange)
+    rand = random.randrange(1, maxrange)
     print(f"Getting UID {rand}")
     cursor.execute(f"SELECT * FROM main WHERE uid = {rand}")
     req = cursor.fetchone()
@@ -59,4 +61,16 @@ def get_main():
     return jsonify(jsonout)
 
 if __name__ == '__main__':
-   app.run()
+    cherrypy.tree.graft(app, '/')
+    cherrypy.config.update({
+        'server.socket_host': '0.0.0.0',
+        'server.socket_port': 8080,
+        'server.thread_pool': 30,
+        'server.max_request_body_size': 0,
+        'server.socket_timeout': 60,
+        'log.access_file': 'access.log',
+        'log.error_file': 'error.log',
+        'log.screen': True
+    })
+    cherrypy.engine.start()
+    cherrypy.engine.block()
