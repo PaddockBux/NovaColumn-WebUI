@@ -33,6 +33,7 @@ body, html {
 
 .container-alignment {
     text-align: center;
+    text-shadow: 2px 0px black;
 }
 
 .item {
@@ -136,6 +137,7 @@ body, html {
 
 .scanned {
     text-align: center;
+    text-shadow: 2px 0px black;
 }
 
 .center-container {
