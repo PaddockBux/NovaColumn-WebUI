@@ -3,12 +3,17 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>NovaColumn</title>
+        <title>NovaColumn - Minecraft Server Database</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="assets/style.css">
         <link rel="stylesheet" href="assets/mcmotd.css">
         <link rel="shortcut icon" href="assets/nova.png" type="image/x-icon">
+        <meta content="NovaColumn - Minecraft Server Database" property="og:title" />
+        <!-- <meta content="[DESCRIPTION HERE]" property="og:description" /> -->
+        <meta content="https://novacolumn.com" property="og:url" />
+        <meta content="https://novacolumn.com/assets/nova.png" property="og:image" />
+        <meta content="#9933ff" data-react-helmet="true" name="theme-color" />
         <script src="https://cdn.jsdelivr.net/gh/nailujx86/mcmotdparser@master/dist/motdparserweb.js" type="text/javascript"></script>
     </head>
     <body>
@@ -22,9 +27,6 @@
                 <a class="ip" id="displayIP" href="https://mcsrvstat.us/server/" target="_blank">Unavailable</a><p class="ping" id="displayPing">(Unavailable)</p>
             </div>
         </div>
-        <!-- <div class="center-container">
-            <a class="ip" id="displayIP" href="https://mcsrvstat.us/server/" target="_blank">Unavailable</a><p class="ping" id="displayPing">(Unavailable)</p>
-        </div> -->
         <div class="row-container">
             <div class="item playerlist" id="plist">
                 <a id="username" style="display: none" href="https://namemc.com/profile/" target="_blank">Unavailable</a>
@@ -38,6 +40,7 @@
                 <div class="motdbox" id="motd">Unavailable</div>
             </div>
         </div>        
+        <p class="scanned" id="date">Scanned on: Unavailable</p>
         <script>
             async function play() {
                 new Audio("assets/click.ogg").play();
@@ -74,7 +77,7 @@
                 list.innerHTML = "<br>";
             };
             function update()   {
-                fetch("http://localhost:8090").then(function(response) {
+                fetch("https://api.novacolumn.com").then(function(response) {
                     if(!response.ok)    {
                         throw new Error("API not ok");
                     }
@@ -118,10 +121,5 @@
             };
             update();
         </script>
-        <!-- <footer>
-            <div class="infotext">
-                <p class="right" id="date">Scanned on: Unavailable</p>
-            </div>
-        </footer> -->
     </body>
 </html>
