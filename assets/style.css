@@ -11,8 +11,31 @@ body {
     /* Pixel rendering because... gross */
     font-family: 'Minecraft';
     color: white;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('dirt.png');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('stone.png');
+    background-size: 5%;
     background-blend-mode: darken;
+}
+
+.row-container {
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    justify-content: center;
+}
+
+.container-alignment {
+    text-align: center;
+}
+
+.item {
+    margin-right: 20px; /* Add space between items */
+}
+
+.playerlist {
+    background-color: black;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 8px;
 }
 
 /* MOTD & IP*/
@@ -35,10 +58,9 @@ body {
 
 .ip {
     font-size: 30pt;
-    padding-top: 10px;
+    padding-top: 16px;
+    padding-bottom: 10px;
     text-shadow: 5px 0px black;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .infotext {
@@ -51,12 +73,6 @@ body {
     box-sizing: border-box;
     margin-top: auto;
 }
-.left {
-    text-align: left;
-}
-.right {
-    text-align: right;
-}
 
 .verIndent {
     color: lightgray;
@@ -65,13 +81,6 @@ body {
     padding: 3px;
     border-radius: 2px;
     background-color: black;
-}
-
-.verContainer {
-    padding-top: 4px;
-    margin-left: auto;
-    margin-right: auto;
-    /* padding-bottom: 10px; */
 }
 
 .center {
@@ -89,19 +98,7 @@ body {
     font-size: 12px;
     cursor: help;
     text-shadow: 1.5px 0px black;
-}
-
-.playerlist {
-    background-color: black;
-    padding-left: 20px;
-    padding-right: 20px;
-    margin-bottom: 20px;
-    margin-top: 10px;
-    border-radius: 8px;
-    width: fit-content;
-    height: fit-content;
-    margin-left: auto;
-    margin-right: auto;
+    /* float: right; */
 }
 
 .about-people img{
@@ -128,16 +125,9 @@ body {
     vertical-align: top;
 }
 
-.button-container {
+.center-container {
     display: flex;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.ipdisplayer {
-    display: flex;
-    margin-left: auto;
-    margin-right: auto;
+    justify-content: center;
 }
 
 .ping {
@@ -149,8 +139,9 @@ body {
     width: 100px;
     height: 100px;
     right: 0;
-    bottom: 0;
-    padding: 30px;
+    /* bottom: 0; */
+    /* padding-top: 10px; */
+    padding-right: 20px;
     position: absolute;
 }
 
@@ -218,23 +209,17 @@ body {
     overflow: auto;
 } */
 
-.wrapper {
-    padding: 30px;
-    background-color: rgba(0, 0, 0, 0.6);
-    margin: auto;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    overflow: auto; /* Ensures content can scroll */
-    max-height: fit-content; /* Limits the maximum height to 90% of the viewport height */
-    max-width: fit-content;  /* Limits the maximum width to 90% of the viewport width */
-    box-sizing: border-box; /* Ensures padding is included in the element's total width and height */
-    min-height: fit-content; /* Ensures the wrapper only takes the necessary height */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.top-wrapper {
+    padding: 10px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('dirt.png');
+    background-size: 5%;
 }
 
 /* Uuid text */
@@ -269,11 +254,7 @@ a:active {
     width: 200px;
     color: red;
     font-style: italic;
-    height: auto;
     /* padding: 10px; */
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .brog    {
