@@ -45,6 +45,7 @@ body, html {
     padding-left: 20px;
     padding-right: 20px;
     border-radius: 8px;
+    /* height: fit-content; */ /* Optional */
 }
 
 /* MOTD & IP*/

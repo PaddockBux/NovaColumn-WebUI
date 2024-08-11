@@ -27,6 +27,16 @@ def get_main():
     cursor.execute("SELECT MAX(uid) FROM main")
     maxrange = cursor.fetchone()[0]
     rand = random.randrange(1, maxrange)
+
+    cursor.execute("SELECT * FROM main WHERE uid = ?", (rand,))
+    query = cursor.fetchone()
+    ip_fk = query[1]
+    port = query[2]
+    cursor.execute("SELECT MAX(time) FROM main WHERE ip_fk = ? AND port = ?", (ip_fk, port))
+    time = cursor.fetchone()[0]
+    cursor.execute("SELECT uid FROM main WHERE time = ?", (time,))
+    rand = cursor.fetchone()[0]
+
     print(f"Getting UID {rand}")
     cursor.execute(f"SELECT * FROM main WHERE uid = {rand}")
     req = cursor.fetchone()
