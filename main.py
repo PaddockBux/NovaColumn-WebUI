@@ -40,7 +40,6 @@ def get_main():
     print(f"Getting UID {rand}")
     cursor.execute(f"SELECT * FROM main WHERE uid = {rand}")
     req = cursor.fetchone()
-    # (114, 40, 25579, 1722446968.5482442, 0, 10, 3, 2, '[]', 1, 20, 146.869)
     jsonout = {}
     jsonout['port'] = req[2]
     jsonout['time'] = datetime.fromtimestamp(req[3]).strftime('%Y-%m-%d %H:%M:%S')

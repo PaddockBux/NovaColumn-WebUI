@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="assets/mcmotd.css">
         <link rel="shortcut icon" href="assets/nova.png" type="image/x-icon">
         <meta content="NovaColumn - Minecraft Server Database" property="og:title" />
-        <!-- <meta content="[DESCRIPTION HERE]" property="og:description" /> -->
+        <meta content="NovaColumn gathers Minecraft server info, logging historical player count, usernames/UUIDs, addresses and ports, Minecraft version, signed message status, and server icons. NovaColumn is a research group dedicated to analysis of Minecraft's community." property="og:description" />
         <meta content="https://novacolumn.com" property="og:url" />
         <meta content="https://novacolumn.com/assets/nova.png" property="og:image" />
         <meta content="#9933ff" data-react-helmet="true" name="theme-color" />
@@ -77,7 +77,7 @@
                 list.innerHTML = "<br>";
             };
             function update()   {
-                fetch("https://api.novacolumn.com").then(function(response) {
+                fetch("http://localhost:8080").then(function(response) {
                     if(!response.ok)    {
                         throw new Error("API not ok");
                     }
