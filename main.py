@@ -20,6 +20,16 @@ try:
     print("Successfully connected MariaDB.")
 except mariadb.Error as e:
     print(f"Error connecting to MariaDB Platform: {e}")
+    exit(1)
+
+def get_latest_uid(cursor, rand):
+    cursor.execute("SELECT ip_fk, port FROM main WHERE uid = ?", (rand,))
+    query = cursor.fetchone()
+    ip_fk = query[0]
+    port = query[1]
+    cursor.execute(f"SELECT MAX(uid) FROM main WHERE ip_fk = ? AND port = ?", (ip_fk, port))
+    rand = cursor.fetchone()[0]
+    return rand
 
 @app.route('/', methods=['GET'])
 def get_main():
@@ -28,17 +38,22 @@ def get_main():
     maxrange = cursor.fetchone()[0]
     rand = random.randrange(1, maxrange)
 
-    cursor.execute("SELECT * FROM main WHERE uid = ?", (rand,))
-    query = cursor.fetchone()
-    ip_fk = query[1]
-    port = query[2]
-    cursor.execute("SELECT MAX(time) FROM main WHERE ip_fk = ? AND port = ?", (ip_fk, port))
-    time = cursor.fetchone()[0]
-    cursor.execute("SELECT uid FROM main WHERE time = ?", (time,))
-    rand = cursor.fetchone()[0]
+    latest = get_latest_uid(cursor, rand)
 
-    print(f"Getting UID {rand}")
-    cursor.execute(f"SELECT * FROM main WHERE uid = {rand}")
+    cursor.execute(f"SELECT online FROM online WHERE main_fk = ?", (latest,))
+    online_type = cursor.fetchone()[0]
+    while online_type == 0:
+        rand = random.randrange(1, maxrange)
+
+        latest = get_latest_uid(cursor, rand)
+
+        cursor.execute(f"SELECT online FROM online WHERE main_fk = ?", (latest,))
+        online_type = cursor.fetchone()[0]
+        
+
+    print("----------------------")
+    print(f"Getting UID {latest}")
+    cursor.execute(f"SELECT * FROM main WHERE uid = {latest}")
     req = cursor.fetchone()
     jsonout = {}
     jsonout['port'] = req[2]
