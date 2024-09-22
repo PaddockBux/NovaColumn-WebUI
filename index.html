@@ -14,6 +14,7 @@
         <meta content="https://novacolumn.com" property="og:url" />
         <meta content="https://novacolumn.com/assets/nova.png" property="og:image" />
         <meta content="#9933ff" data-react-helmet="true" name="theme-color" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/nailujx86/mcmotdparser@master/dist/motdparserweb.js" type="text/javascript"></script>
     </head>
     <body>
@@ -27,9 +28,10 @@
                 <a class="ip" id="displayIP" href="https://mcsrvstat.us/server/" target="_blank">Unavailable</a><p class="ping" id="displayPing">(Unavailable)</p>
             </div>
         </div>
+        <div class="motdbox" id="motd">Unavailable</div>
         <div class="row-container">
             <div class="item playerlist" id="plist">
-                <a id="username" style="display: none" href="https://namemc.com/profile/" target="_blank">Unavailable</a>
+                <a id="username" style="display: none" href="https://namemc.com/profile/" target="_blank">Unavailable</a><div id="valid" class="dot" title="Unavailable"></div>
                 <span id="userID" style="display: none" class="uuid">Unavailable</span>
             </div>
             <div class="container-alignment">
@@ -37,10 +39,14 @@
                 <p id="playerCount">Playercount: Unavailable</p>
                 <p><span id="signed">Reporting: Unavailable</span><a title="Report players in-game for messages, skins, or names." class="help">(?)</a></p>
                 <img id="icon" src="" alt="Broken icon!" class="icon"><br>
-                <div class="motdbox" id="motd">Unavailable</div>
             </div>
-        </div>        
-        <p class="scanned" id="date">Scanned on: Unavailable</p>
+        </div>
+        <div class="row-container2">
+            <div class="chart-container" id="chartContainer">
+                <canvas id="graph"></canvas>
+            </div>
+        </div>
+        <p class="scanned" id="date">Last scanned on: Unavailable</p>
         <script>
             async function play() {
                 new Audio("assets/click.ogg").play();
@@ -48,6 +54,7 @@
             var list = document.getElementById("plist");
             var usernamebase = document.getElementById("username").cloneNode(true);
             var useridbase = document.getElementById("userID").cloneNode(true);
+            var validbase = document.getElementById("valid").cloneNode(true);
             function copy() {
                 var ip = document.getElementById("displayIP").innerHTML;
                 navigator.clipboard.writeText(ip);
@@ -57,17 +64,40 @@
                     button.innerHTML = "<span>Copy IP</span>";
                 }, 500)
             };
-            function addplayer(usernamestring, uuid)  {
+            function addplayer(usernamestring, uuid, validity) {
                 var username = usernamebase.cloneNode(true);
                 var userid = useridbase.cloneNode(true);
+                var valid = validbase.cloneNode(true);
+
+                // Display the username and userid
                 username.style.display = "inline-block";
                 userid.style.display = "inline-block";
+
+                // Set the username and UUID content
                 username.innerHTML = usernamestring;
                 username.href += uuid;
                 userid.innerHTML = "(" + uuid + ")";
+
+                // Set the class of the 'valid' dot based on 'validity'
+                if (validity === 'true') {
+                    valid.className = "dot valid"; // Valid state
+                    valid.title = "Valid account"; // Tooltip for valid state
+                } else if (validity === 'false') {
+                    valid.className = "dot invalid"; // Invalid state
+                    valid.title = "Cracked account"; // Tooltip for invalid state
+                } else if (validity === 'waiting') {
+                    valid.className = "dot waiting"; // Waiting state
+                    valid.title = "Waiting for validation"; // Tooltip for waiting state
+                }
+
+                // Remove IDs for cloned elements
                 userid.id = "";
                 username.id = "";
+                valid.id = "";
+
+                // Append elements to the list
                 list.appendChild(username);
+                list.appendChild(valid);
                 list.appendChild(document.createElement("br"));
                 list.appendChild(userid);
                 list.appendChild(document.createElement("br"));
@@ -76,6 +106,55 @@
             function clearplayers() {
                 list.innerHTML = "<br>";
             };
+            
+            const ctx = document.getElementById('graph').getContext('2d');
+            const graph = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Playercount History',
+                        data: [],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: 'white' // Change X-axis text color
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: 'white', // Change Y-axis text color
+                            },
+                            beginAtZero: true // Start y-axis at 0
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'white', // Change legend label text color
+                                font: {
+                                    size: 14 // Optionally change the font size of labels
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            function updateChartData(newData) {
+                    graph.data.labels = newData.playergraph[0]; // X-axis data
+                    graph.data.datasets[0].data = newData.playergraph[1]; // Y-axis data
+                    graph.update();
+            };
+
             function update()   {
                 fetch("http://localhost:8080").then(function(response) {
                     if(!response.ok)    {
@@ -104,17 +183,18 @@
                     var players = data.players;
                     var uuids = data.playersid;
                     if(players.length == 0) {
-                        addplayer("NO_PLAYERS", "00000000-0000-0000-0000-000000000000")
+                        addplayer("NO_PLAYERS", "00000000-0000-0000-0000-000000000000", data.validity)
                     }
                     for(var i = 0; i < players.length; i++) {
-                        addplayer(players[i], uuids[i]);
+                        addplayer(players[i], uuids[i], data.validity[i]);
                     }
                     var playercount = document.getElementById("playerCount");
                     playercount.innerHTML = "Playercount: " + data.playercount + "/" + data.playermax;
                     var signed = document.getElementById("signed");
                     signed.innerHTML = "Reporting: " + ((data.signed == 1) ? "Enabled" : "Disabled");
                     var date = document.getElementById("date");
-                    date.innerHTML = "Scanned on: " + data.time;
+                    date.innerHTML = "Last scanned on: " + data.time;
+                    updateChartData(data);
                 }).catch(function(error)    {
                     throw new Error("Parsing error");
                 });

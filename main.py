@@ -37,6 +37,7 @@ def get_main():
     cursor.execute("SELECT MAX(uid) FROM main")
     maxrange = cursor.fetchone()[0]
     rand = random.randrange(1, maxrange)
+    print(f"Getting raw UID {rand}")
 
     latest = get_latest_uid(cursor, rand)
 
@@ -63,13 +64,17 @@ def get_main():
     jsonout['players'] = ast.literal_eval(req[8])
     username = []
     userid = []
+    valid = []
     for player in jsonout['players']:
         cursor.execute(f"SELECT username FROM playernames WHERE uid = {player}")
         username.append(cursor.fetchone()[0])
         cursor.execute(f"SELECT userid FROM playernames WHERE uid = {player}")
         userid.append(cursor.fetchone()[0])
+        cursor.execute(f"SELECT valid FROM playernames WHERE uid = {player}")
+        valid.append(cursor.fetchone()[0])
     jsonout['players'] = username
     jsonout['playersid'] = userid
+    jsonout['validity'] = valid
     jsonout['signed'] = req[9]
     jsonout['ping'] = req[11]
 
@@ -81,6 +86,14 @@ def get_main():
     jsonout['version'] = cursor.fetchone()[0]
     cursor.execute(f"SELECT data FROM icons WHERE uid = {req[10]}")
     jsonout['icon'] = cursor.fetchone()[0]
+    cursor.execute("SELECT * FROM main WHERE ip_fk = ? AND port = ?", (req[1], req[2]))
+    request = cursor.fetchall()
+    x = []
+    y = []
+    for index in range(len(request)):
+        y.append(request[index][4])
+        x.append(datetime.fromtimestamp(request[index][3]).strftime('%Y-%m-%d %H:%M:%S'))
+    jsonout['playergraph'] = x, y
     print(f"Gave data:\n{jsonout['icon'][:40]}...\n{jsonout['ip']}\n{jsonout['motd']}\n{jsonout['ping']}\n{jsonout['playercount']}\n{jsonout['playermax']}\n{jsonout['players']}\n{jsonout['playersid']}\n{jsonout['port']}\n{jsonout['signed']}\n{jsonout['time']}\n{jsonout['version']}")
     return jsonify(jsonout)
 
