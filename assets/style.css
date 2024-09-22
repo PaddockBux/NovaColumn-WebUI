@@ -37,8 +37,9 @@ body, html {
     padding-bottom: 10px;
     justify-content: center;
     width: 30%;
+    padding: 10px;
     margin: 0 auto;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('cobblestone.png');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('cobblestone.png');
     background-size: 10%;
     background-blend-mode: darken;
 }
@@ -273,13 +274,13 @@ body, html {
 }
 
 .dot.valid {
-    background-color: green;
+    background-color: rgb(0, 106, 255);
 }
 .dot.invalid {
-    background-color: red;
+    background-color: salmon;
 }
 .dot.waiting {
-    background-color: yellow;
+    background-color: magenta;
 }
 
 /* Link recoloring */

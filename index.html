@@ -109,15 +109,19 @@
             
             const ctx = document.getElementById('graph').getContext('2d');
             const graph = new Chart(ctx, {
-                type: 'line',
+                type: 'bar',
                 data: {
                     labels: [],
                     datasets: [{
                         label: 'Playercount History',
                         data: [],
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 2,
-                        fill: false
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.6)',  // Blue color fill
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                        ],
+                        borderWidth: 1 // Border width around each bar
                     }]
                 },
                 options: {
@@ -125,11 +129,17 @@
                     maintainAspectRatio: false,
                     scales: {
                         x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0)' // Change X-axis grid line color
+                            },
                             ticks: {
                                 color: 'white' // Change X-axis text color
                             }
                         },
                         y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 1)' // Change X-axis grid line color
+                            },
                             ticks: {
                                 color: 'white', // Change Y-axis text color
                             },
