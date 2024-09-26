@@ -69,33 +69,28 @@
                 var userid = useridbase.cloneNode(true);
                 var valid = validbase.cloneNode(true);
 
-                // Display the username and userid
                 username.style.display = "inline-block";
                 userid.style.display = "inline-block";
 
-                // Set the username and UUID content
                 username.innerHTML = usernamestring;
                 username.href += uuid;
                 userid.innerHTML = "(" + uuid + ")";
 
-                // Set the class of the 'valid' dot based on 'validity'
                 if (validity === 'true') {
-                    valid.className = "dot valid"; // Valid state
-                    valid.title = "Valid account"; // Tooltip for valid state
+                    valid.className = "dot valid";
+                    valid.title = "Valid account";
                 } else if (validity === 'false') {
-                    valid.className = "dot invalid"; // Invalid state
-                    valid.title = "Cracked account"; // Tooltip for invalid state
+                    valid.className = "dot invalid";
+                    valid.title = "Cracked account";
                 } else if (validity === 'waiting') {
-                    valid.className = "dot waiting"; // Waiting state
-                    valid.title = "Waiting for validation"; // Tooltip for waiting state
+                    valid.className = "dot waiting";
+                    valid.title = "Waiting for validation";
                 }
 
-                // Remove IDs for cloned elements
                 userid.id = "";
                 username.id = "";
                 valid.id = "";
 
-                // Append elements to the list
                 list.appendChild(username);
                 list.appendChild(valid);
                 list.appendChild(document.createElement("br"));
@@ -116,12 +111,12 @@
                         label: 'Playercount History',
                         data: [],
                         backgroundColor: [
-                            'rgba(54, 162, 235, 0.6)',  // Blue color fill
+                            'rgba(54, 162, 235, 0.6)',
                         ],
                         borderColor: [
                             'rgba(54, 162, 235, 1)',
                         ],
-                        borderWidth: 1 // Border width around each bar
+                        borderWidth: 1
                     }]
                 },
                 options: {
@@ -130,28 +125,28 @@
                     scales: {
                         x: {
                             grid: {
-                                color: 'rgba(255, 255, 255, 0)' // Change X-axis grid line color
+                                color: 'rgba(255, 255, 255, 0)'
                             },
                             ticks: {
-                                color: 'white' // Change X-axis text color
+                                color: 'white'
                             }
                         },
                         y: {
                             grid: {
-                                color: 'rgba(255, 255, 255, 1)' // Change X-axis grid line color
+                                color: 'rgba(255, 255, 255, 1)'
                             },
                             ticks: {
-                                color: 'white', // Change Y-axis text color
+                                color: 'white',
                             },
-                            beginAtZero: true // Start y-axis at 0
+                            beginAtZero: true
                         }
                     },
                     plugins: {
                         legend: {
                             labels: {
-                                color: 'white', // Change legend label text color
+                                color: 'white',
                                 font: {
-                                    size: 14 // Optionally change the font size of labels
+                                    size: 14
                                 }
                             }
                         }
@@ -160,8 +155,8 @@
             });
 
             function updateChartData(newData) {
-                    graph.data.labels = newData.playergraph[0]; // X-axis data
-                    graph.data.datasets[0].data = newData.playergraph[1]; // Y-axis data
+                    graph.data.labels = newData.playergraph[0];
+                    graph.data.datasets[0].data = newData.playergraph[1];
                     graph.update();
             };
 
