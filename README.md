@@ -18,7 +18,7 @@ Edit the `api.py` file to change the database connection information on lines 14
 
 Then, edit the main `index.html` file on line 164 to change the API url. By default, it is already pointing to the API locally.
 
-Run `python3 main.py` to start the server on port 8080.
+Run `python api.py` to start the server on port 8080.
 
 ## Contributing
 
