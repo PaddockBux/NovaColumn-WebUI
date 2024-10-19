@@ -1,0 +1,4 @@
+mariadb
+flask
+cherrypy
+flask_cors

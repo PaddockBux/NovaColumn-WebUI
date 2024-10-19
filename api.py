@@ -18,26 +18,25 @@ try:
         database="novacolumn"
     )
     print("Successfully connected MariaDB.")
+    cursor = conn.cursor()
+    print("Initializing tables...")
+    cursor.execute("SELECT DISTINCT ip_fk, PORT FROM main")
+    unique_servers = cursor.fetchall()
+    maxrange = len(unique_servers)
+    print(f"Found {maxrange} unique servers")
 except mariadb.Error as e:
     print(f"Error connecting to MariaDB Platform: {e}")
     exit(1)
 
 def get_latest_uid(cursor, rand):
-    cursor.execute("SELECT ip_fk, port FROM main WHERE uid = ?", (rand,))
-    query = cursor.fetchone()
-    ip_fk = query[0]
-    port = query[1]
-    cursor.execute(f"SELECT MAX(uid) FROM main WHERE ip_fk = ? AND port = ?", (ip_fk, port))
+    cursor.execute("SELECT MAX(uid) FROM main WHERE ip_fk = ? AND port = ?", (unique_servers[rand][0], unique_servers[rand][1]))
     rand = cursor.fetchone()[0]
     return rand
 
 @app.route('/', methods=['GET'])
 def get_main():
-    cursor = conn.cursor()
-    cursor.execute("SELECT MAX(uid) FROM main")
-    maxrange = cursor.fetchone()[0]
     rand = random.randrange(1, maxrange)
-    print(f"Getting raw UID {rand}")
+    print(f"Getting unique server {rand} - {unique_servers[rand][0], unique_servers[rand][1]}")
 
     latest = get_latest_uid(cursor, rand)
 
@@ -92,7 +91,8 @@ def get_main():
     y = []
     for index in range(len(request)):
         y.append(request[index][4])
-        x.append(datetime.fromtimestamp(request[index][3]).strftime('%Y-%m-%d %H:%M:%S'))
+        x.append(request[index][3])
+        # x.append(datetime.fromtimestamp(request[index][3]).strftime('%Y-%m-%d %H:%M:%S'))
     jsonout['playergraph'] = x, y
     print(f"Gave data:\n{jsonout['icon'][:40]}...\n{jsonout['ip']}\n{jsonout['motd']}\n{jsonout['ping']}\n{jsonout['playercount']}\n{jsonout['playermax']}\n{jsonout['players']}\n{jsonout['playersid']}\n{jsonout['port']}\n{jsonout['signed']}\n{jsonout['time']}\n{jsonout['version']}")
     return jsonify(jsonout)
