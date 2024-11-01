@@ -67,20 +67,6 @@ body, html {
     cursor: pointer;
 }
 
-.webring {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  padding: 20px;
-}
-
-.webring img {
-    vertical-align: middle;
-    height: 24px;
-}
-
 .playerlist {
     background-color: black;
     padding-left: 20px;
