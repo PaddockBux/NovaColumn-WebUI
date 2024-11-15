@@ -1,5 +1,4 @@
 import ast
-from datetime import datetime
 import random
 import mariadb
 from flask import Flask, jsonify
@@ -35,67 +34,51 @@ def get_latest_uid(cursor, rand):
 
 @app.route('/', methods=['GET'])
 def get_main():
-    rand = random.randrange(1, maxrange)
-    print(f"Getting unique server {rand} - {unique_servers[rand][0], unique_servers[rand][1]}")
-
-    latest = get_latest_uid(cursor, rand)
-
-    cursor.execute(f"SELECT online FROM online WHERE main_fk = ?", (latest,))
-    online_type = cursor.fetchone()[0]
+    online_type = 0
     while online_type == 0:
         rand = random.randrange(1, maxrange)
-
         latest = get_latest_uid(cursor, rand)
-
         cursor.execute(f"SELECT online FROM online WHERE main_fk = ?", (latest,))
         online_type = cursor.fetchone()[0]
-        
-
-    print("----------------------")
-    print(f"Getting UID {latest}")
-    cursor.execute(f"SELECT * FROM main WHERE uid = {latest}")
-    req = cursor.fetchone()
-    jsonout = {}
-    jsonout['port'] = req[2]
-    jsonout['time'] = datetime.fromtimestamp(req[3]).strftime('%Y-%m-%d %H:%M:%S')
-    jsonout['playercount'] = req[4]
-    jsonout['playermax'] = req[5]
-    jsonout['players'] = ast.literal_eval(req[8])
+    print(f"[GET] {rand}/{latest} - {unique_servers[rand][0], unique_servers[rand][1]}")
+    cursor.execute('SELECT i.address, a.port, a.ping, a.playercount, a.playermax, a.users_fk, a.signed, FROM_UNIXTIME(a.time), m.text, v.text, c.data FROM main a JOIN ips i ON a.ip_fk = i.uid JOIN motds m ON a.motd_fk = m.uid JOIN versions v ON a.ver_fk = v.uid JOIN icons c ON a.icon_fk = c.uid WHERE a.uid = ? GROUP BY i.address, a.port', (latest,))
+    info = cursor.fetchone()
+    info_out = {}
+    info_out['ip'] = info[0]
+    info_out['port'] = info[1]
+    info_out['ping'] = info[2]
+    info_out['playercount'] = info[3]
+    info_out['playermax'] = info[4]
+    info_out['signed'] = info[6]
+    info_out['time'] = info[7]
+    info_out['motd'] = info[8]
+    info_out['version'] = info[9]
+    info_out['icon'] = info[10]
+    playeruidlist = ast.literal_eval(info[5])
+    if isinstance(playeruidlist, int):
+        playeruidlist = [playeruidlist]
+    if playeruidlist != []:
+        cursor.execute('SELECT username, userid, valid FROM playernames WHERE uid IN ({})'.format(', '.join(map(str, playeruidlist))))
+    playeruidlist_out = cursor.fetchall()
     username = []
     userid = []
     valid = []
-    for player in jsonout['players']:
-        cursor.execute(f"SELECT username FROM playernames WHERE uid = {player}")
-        username.append(cursor.fetchone()[0])
-        cursor.execute(f"SELECT userid FROM playernames WHERE uid = {player}")
-        userid.append(cursor.fetchone()[0])
-        cursor.execute(f"SELECT valid FROM playernames WHERE uid = {player}")
-        valid.append(cursor.fetchone()[0])
-    jsonout['players'] = username
-    jsonout['playersid'] = userid
-    jsonout['validity'] = valid
-    jsonout['signed'] = req[9]
-    jsonout['ping'] = req[11]
-
-    cursor.execute(f"SELECT address FROM ips WHERE uid = {req[1]}")
-    jsonout['ip'] = cursor.fetchone()[0]
-    cursor.execute(f"SELECT text FROM motds WHERE uid = {req[6]}")
-    jsonout['motd'] = cursor.fetchone()[0]
-    cursor.execute(f"SELECT text FROM versions WHERE uid = {req[7]}")
-    jsonout['version'] = cursor.fetchone()[0]
-    cursor.execute(f"SELECT data FROM icons WHERE uid = {req[10]}")
-    jsonout['icon'] = cursor.fetchone()[0]
-    cursor.execute("SELECT * FROM main WHERE ip_fk = ? AND port = ?", (req[1], req[2]))
-    request = cursor.fetchall()
+    for index in range(len(playeruidlist_out)):
+        username.append(playeruidlist_out[index][0])
+        userid.append(playeruidlist_out[index][1])
+        valid.append(playeruidlist_out[index][2])
+    info_out['players'] = username
+    info_out['playersid'] = userid
+    info_out['validity'] = valid
+    cursor.execute('SELECT playercount, FROM_UNIXTIME(time) FROM main WHERE ip_fk = (SELECT uid FROM ips WHERE address = ?) AND port = ?', (info_out['ip'], info_out['port']))
+    graph = cursor.fetchall()
     x = []
     y = []
-    for index in range(len(request)):
-        y.append(request[index][4])
-        x.append(request[index][3])
-        # x.append(datetime.fromtimestamp(request[index][3]).strftime('%Y-%m-%d %H:%M:%S'))
-    jsonout['playergraph'] = x, y
-    print(f"Gave data:\n{jsonout['icon'][:40]}...\n{jsonout['ip']}\n{jsonout['motd']}\n{jsonout['ping']}\n{jsonout['playercount']}\n{jsonout['playermax']}\n{jsonout['players']}\n{jsonout['playersid']}\n{jsonout['port']}\n{jsonout['signed']}\n{jsonout['time']}\n{jsonout['version']}")
-    return jsonify(jsonout)
+    for index in range(len(graph)):
+        x.append(graph[index][0])
+        y.append(graph[index][1])
+    info_out['playergraph'] = y, x
+    return jsonify(info_out)
 
 if __name__ == '__main__':
     cherrypy.tree.graft(app, '/')
