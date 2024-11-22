@@ -1,22 +1,50 @@
-import ast
-import random
-import mariadb
 from flask import Flask, jsonify
-import cherrypy
 from flask_cors import CORS
+import argparse
+import cherrypy
+import mariadb
+import random
+import ast
 
 app = Flask(__name__)
 CORS(app)
 
+parse = argparse.ArgumentParser(
+    description='''
+           _  __              _____     __                   _      __    __   __  ______
+          / |/ /__ _  _____ _/ ___/__  / /_ ____ _  ___  ___| | /| / /__ / /  / / / /  _/
+         /    / _ \\ |/ / _ `/ /__/ _ \\/ / // /  ' \\/ _ \\/___/ |/ |/ / -_) _ \\/ /_/ // /  
+        /_/|_/\\___/___/\\_,_/\\___/\\___/_/\\_,_/_/_/_/_//_/    |__/|__/\\__/_.__/\\____/___/  
+                                     NovaColumn-WebUI
+           Programmed by & main ideas guy: GoGreek    ::    Co-ideas guy: Draxillian
+''',
+formatter_class=argparse.RawDescriptionHelpFormatter,
+epilog='''
+Use case:
+python api.py localhost root password novacolumn
+
+Output translation:
+[GET] (random unique server) / (latest uid from server) - ((IP foreign key), (port))
+'''
+# print(f"[GET] {rand}/{latest} - {unique_servers[rand][0], unique_servers[rand][1]}")
+)
+parse.add_argument('host', type=str, help="host IP of the database")
+parse.add_argument('username', type=str, help="database username to use.")
+parse.add_argument('password', type=str, help="database password to use.")
+parse.add_argument('database', type=str, help="database password to use.")
+parse.add_argument('--dbport', type=int, default=3306, help="use a different database port. (default 3306)")
+parse.add_argument('--port', type=int, default=8080, help="use a different API port instead of default (8080).")
+arguments = parse.parse_args()
+
 try:
     conn = mariadb.connect(
-        user="root",
-        password="",
-        host="localhost",
-        port=3306,
-        database="novacolumn"
+        user=arguments.username,
+        password=arguments.password,
+        host=arguments.host,
+        port=arguments.dbport,
+        database=arguments.database
     )
-    print("Successfully connected MariaDB.")
+    print(f"Successfully connected MariaDB with user {arguments.username}")
     cursor = conn.cursor()
     print("Initializing tables...")
     cursor.execute("SELECT DISTINCT ip_fk, PORT FROM main")
@@ -84,7 +112,7 @@ if __name__ == '__main__':
     cherrypy.tree.graft(app, '/')
     cherrypy.config.update({
         'server.socket_host': '0.0.0.0',
-        'server.socket_port': 8080,
+        'server.socket_port': arguments.port,
         'server.thread_pool': 30,
         'server.max_request_body_size': 0,
         'server.socket_timeout': 60,
