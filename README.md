@@ -19,6 +19,8 @@ If you are using this for personal or development purposes, you will not need to
 
 To setup NCWebUI for production or shared use, you will need to edit line 165 in `index.html` and set the fetch URL to the API's public endpoint.
 
+To run the API, simply run the script with the correct database credentials: `python api.py localhost root password novacolumn`
+
 The help page (`python api.py -h`) has all of the details of use:
 
 ```text
