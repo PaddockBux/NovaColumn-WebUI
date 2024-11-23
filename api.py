@@ -31,7 +31,7 @@ Output translation:
 parse.add_argument('host', type=str, help="host IP of the database")
 parse.add_argument('username', type=str, help="database username to use.")
 parse.add_argument('password', type=str, help="database password to use.")
-parse.add_argument('database', type=str, help="database password to use.")
+parse.add_argument('database', type=str, help="database name to use.")
 parse.add_argument('--dbport', type=int, default=3306, help="use a different database port. (default 3306)")
 parse.add_argument('--port', type=int, default=8080, help="use a different API port instead of default (8080).")
 arguments = parse.parse_args()
