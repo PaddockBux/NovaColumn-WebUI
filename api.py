@@ -46,29 +46,41 @@ try:
     )
     print(f"Successfully connected MariaDB with user {arguments.username}")
     cursor = conn.cursor()
-    print("Initializing tables...")
-    cursor.execute("SELECT DISTINCT ip_fk, PORT FROM main")
-    unique_servers = cursor.fetchall()
-    maxrange = len(unique_servers)
-    print(f"Found {maxrange} unique servers")
+    memory = None
+    unique_servers = None
+
 except mariadb.Error as e:
     print(f"Error connecting to MariaDB Platform: {e}")
     exit(1)
 
-def get_latest_uid(cursor, rand):
-    cursor.execute("SELECT MAX(uid) FROM main WHERE ip_fk = ? AND port = ?", (unique_servers[rand][0], unique_servers[rand][1]))
-    rand = cursor.fetchone()[0]
-    return rand
+# def get_unique_servers(cursor, count):
+#     if not count:
+#         cursor.execute("SELECT MAX(uid) FROM main GROUP BY ip_fk, port")
+#         unique_servers = cursor.fetchall()
+#         maxrange = len(unique_servers)
+#         return maxrange
+#     else:
+#         cursor.execute("SELECT COUNT(DISTINCT ip_fk, port) FROM main")
+#         return cursor.fetchone()
+
+# def get_latest_uid(cursor, rand):
+#     cursor.execute("SELECT MAX(uid) FROM main WHERE ip_fk = ? AND port = ?", (unique_servers[rand][0], unique_servers[rand][1]))
+#     rand = cursor.fetchone()[0]
+#     return rand
 
 @app.route('/', methods=['GET'])
 def get_main():
-    online_type = 0
-    while online_type == 0:
-        rand = random.randrange(1, maxrange)
-        latest = get_latest_uid(cursor, rand)
-        cursor.execute(f"SELECT online FROM online WHERE main_fk = ?", (latest,))
-        online_type = cursor.fetchone()[0]
-    print(f"[GET] {rand}/{latest} - {unique_servers[rand][0], unique_servers[rand][1]}")
+    global memory
+    global unique_servers
+    cursor.execute("SELECT COUNT(DISTINCT ip_fk, PORT) FROM main")
+    sreq = cursor.fetchone()[0]
+    if memory != sreq:
+        memory = sreq
+        cursor.execute("SELECT MAX(m.uid) FROM main m JOIN online o ON m.uid = o.main_fk WHERE o.online = 1 GROUP BY ip_fk, port")
+        unique_servers = cursor.fetchall()
+    rand = random.randrange(1, memory)
+    latest = unique_servers[rand][0]
+    print(f"[GET] {rand}")
     cursor.execute('SELECT i.address, a.port, a.ping, a.playercount, a.playermax, a.users_fk, a.signed, FROM_UNIXTIME(a.time), m.text, v.text, c.data FROM main a JOIN ips i ON a.ip_fk = i.uid JOIN motds m ON a.motd_fk = m.uid JOIN versions v ON a.ver_fk = v.uid JOIN icons c ON a.icon_fk = c.uid WHERE a.uid = ? GROUP BY i.address, a.port', (latest,))
     info = cursor.fetchone()
     info_out = {}
@@ -106,6 +118,7 @@ def get_main():
         x.append(graph[index][0])
         y.append(graph[index][1])
     info_out['playergraph'] = y, x
+    print(f"[SENT] {info_out['ip']}:{info_out['port']} - {info_out['playercount']}/{info_out['playermax']}")
     return jsonify(info_out)
 
 if __name__ == '__main__':
