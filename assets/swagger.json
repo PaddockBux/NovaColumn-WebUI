@@ -1,0 +1,377 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "NovaColumn API",
+      "version": "1.0.0",
+      "description": "This is the documentation for the NovaColumn API, making access to a NovaColumn-formatted database easy and simple to use. If you have comments or questions about the API, join the [Discord server](https://discord.gg/FtSqu7FzHJ)"
+    },
+    "tags": [
+      {
+        "name": "Database searching",
+        "description": "Endpoints for server-searching functions"
+      }
+    ],
+    "paths": {
+    "/search": {
+        "get": {
+          "summary": "Search for servers",
+          "tags": ["Database searching"],
+          "description": "Search the API using various query parameters. All queries below are optional.",
+          "parameters": [
+            {
+              "name": "suid",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              },
+              "description": "Search via Server Unique ID. Allows to search for a server's history over time in the database. Has special handling and only allows the following arguments when used: `limit` `order` `desc`"
+            },
+            {
+              "name": "ip",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              },
+              "description": "Filter by IP address - Supports SQL wildcards ([List of available wildcards](https://www.w3schools.com/sql/sql_wildcards.asp))"
+            },
+            {
+              "name": "version",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              },
+              "description": "Filter by version - Supports SQL wildcards"
+            },
+            {
+              "name": "protocol",
+              "in": "query",
+              "schema": {
+                "type": "integer"
+              },
+              "description": "Filter by protocol **(integer)**."
+            },
+            {
+              "name": "port",
+              "in": "query",
+              "schema": {
+                "type": "integer"
+              },
+              "description": "Filter by port **(integer)**"
+            },
+            {
+              "name": "icon",
+              "in": "query",
+              "schema": {
+                "type": "integer"
+              },
+              "description": "Filter by icon id **(integer)**"
+            },
+            {
+              "name": "playercount",
+              "in": "query",
+              "schema": {
+                "type": "integer"
+              },
+              "description": "Filter by current player count **(integer)**"
+            },
+            {
+              "name": "playermax",
+              "in": "query",
+              "schema": {
+                "type": "integer"
+              },
+              "description": "Filter by maximum player count **(integer)**"
+            },
+            {
+                "name": "motd",
+                "in": "query",
+                "schema": {
+                "type": "string"
+            },
+            "description": "Filter by Message Of The Day text - Supports SQL wildcards ([List of available wildcards](https://www.w3schools.com/sql/sql_wildcards.asp))"
+            },
+            {
+            "name": "online",
+            "in": "query",
+            "schema": {
+                "type": "string",
+                "enum": ["true", "false"]
+            },
+            "description": "Filter by if the server is currently online"
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "schema": {
+                "type": "integer"
+              },
+              "description": "Limit the number of results returned - The API has a hard limit set by the host"
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              },
+              "description": "Order the results - Supports all arguments except for `limit`, `desc`, and `suid`"
+            },
+            {
+              "name": "desc",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              },
+              "description": "Change the order of the results to descending instead of the default ascending (only applies when `order` is used)"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful search results",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "suid": {
+                          "type": "integer"
+                        },
+                        "ip": {
+                          "type": "string"
+                        },
+                        "port": {
+                          "type": "integer"
+                        },
+                        "ping": {
+                          "type": "number"
+                        },
+                        "playercount": {
+                          "type": "integer"
+                        },
+                        "playermax": {
+                          "type": "integer"
+                        },
+                        "playerinfo": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "username": { "type": "string" },
+                              "userid": { "type": "string" },
+                              "valid": { "type": "string" }
+                            }
+                          }
+                        },
+                        "signed": {
+                          "type": "boolean"
+                        },
+                        "timestamp": {
+                          "type": "string"
+                        },
+                        "motds": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "icon_id": {
+                          "type": "integer"
+                        },
+                        "availability": {
+                          "type": "object",
+                          "properties": {
+                            "online": {
+                              "type": "boolean"
+                            },
+                            "last_checked": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request or parameters",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/icon": {
+        "get": {
+          "tags": ["Database searching"],
+          "summary": "Get the icon of a server in the database",
+          "description": "Retrieve the icon of a server in PNG or base64 format via an `icon_id`.",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "query",
+              "schema": {
+                "type": "integer"
+              },
+              "description": "The `icon_id` of the icon"
+            },
+            {
+              "name": "base",
+              "in": "query",
+              "schema": {
+                "type": "boolean"
+              },
+              "description": "Return the icon in base64 format instead - If it exists in the request, it is interpreted as true"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Icon retrieved successfully. Returns either a PNG image or a base64 encoded string.",
+              "content": {
+                "image/png": {
+                  "schema": {
+                    "type": "image",
+                    "format": "binary"
+                  }
+                },
+                "text/plain": {
+                  "schema": {
+                    "type": "string"
+                  },
+                  "example": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Icon not found"
+            }
+          }
+        }
+      },
+    "/player": {
+        "get": {
+          "tags": ["Database searching"],
+          "summary": "Retrieve player info and servers",
+          "description": "Retrieve a player's server history by providing either a username or a uuid. Limited using only username or uuid of a player. Search for multiple users by using the '|' character.",
+          "parameters": [
+            {
+              "name": "username",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string"
+              },
+              "description": "Player username"
+            },
+            {
+              "name": "uuid",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string"
+              },
+              "description": "Player UUID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful retrieval of player and server data.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "playerinfo": {
+                          "type": "object",
+                          "properties": {
+                            "username": {
+                              "type": "string"
+                            },
+                            "uuid": {
+                              "type": "string"
+                            },
+                            "validity": {
+                              "type": "string"
+                            }
+                          },
+                          "example": {
+                            "username": "Steve",
+                            "uuid": "00000000-0000-0000-0000-000000000000",
+                            "validity": "true"
+                          }
+                        },
+                        "servers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "suid": {
+                                "type": "integer"
+                              },
+                              "timestamp": {
+                                "type": "string",
+                                "format": "date-time"
+                              }
+                            },
+                            "example": {
+                              "suid": 1,
+                              "timestamp": "2025-02-18 12:34:56"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request (e.g. missing or multiple parameters provided)",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    },
+                    "example": {
+                      "error": "invalid argument"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+}
