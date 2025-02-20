@@ -61,7 +61,7 @@ def jsonError(code, string):
 class api:
     @cherrypy.expose()
     def search(self, **kwargs):
-        allowedParams = {'suid', 'ip', 'version', 'protocol', 'port', 'icon', 'playercount', 'playermax', 'motd', 'limit', 'order', 'desc', 'online'}
+        allowedParams = {'suid', 'ip', 'version', 'protocol', 'port', 'icon', 'playercount', 'playermax', 'motd', 'limit', 'order', 'desc', 'online', 'signed'}
         columns = ['suid', 'ip', 'port', 'ping', 'playercount', 'playermax', 'playerinfo', 'signed', 'timestamp', 'motd', 'version', 'icon_id', 'availability']
         disallowedParams = {'limit', 'order', 'desc'}
         intTypeParams = {'limit', 'port', 'protocol', 'icon', 'playercount', 'playermax'}
@@ -116,9 +116,7 @@ class api:
         )
 
         keyOrder = []
-        doOrder = False
-        descOrder = False
-        addLim = False
+        addArgs = {'order': False, 'desc': False, 'limit': False, 'signed': False}
         wildcards = {'motd', 'ip', 'version'}
         if not kwargs.get('suid'):
             query += " AND a.time = (SELECT MAX(a2.time) FROM main a2 JOIN ips i2 ON a2.ip_fk = i2.uid WHERE i2.address = i.address AND a2.port = a.port)"
@@ -130,12 +128,9 @@ class api:
                         query += " WHERE"
                 if item in wildcards:
                     query += " " + filterMapping[item] + " LIKE ?"
-                elif item == 'limit':
-                    addLim = True
-                elif item == 'order':
-                    doOrder = True
-                elif item == 'desc':
-                    descOrder = True
+                    keyOrder.append(key)
+                elif item in addArgs:
+                    addArgs[item] = True
                 else:
                     pattern = re.compile(r'^(>=|<=|>|<|!=)?(\d+)$')
                     match = pattern.match(key)
@@ -147,8 +142,7 @@ class api:
                     except UnboundLocalError:
                         return jsonError(400, "invalid operand")
                     key = number
-
-                keyOrder.append(key)
+                    keyOrder.append(key)
             query += " GROUP BY i.address, a.port"
         else:
             allowedUIDParams = {'suid', 'limit', 'order', 'desc'}
@@ -164,19 +158,23 @@ class api:
                     query += " i.address = (SELECT address FROM ips i JOIN main a ON a.ip_fk = i.uid WHERE a.uid = ?) AND a.port = (SELECT port FROM main WHERE uid = ?)"
                     for _ in range(0, 2):
                         keyOrder.append(key)
-                elif item == 'limit':
-                    addLim = True
-                elif item == 'order':
-                    doOrder = True
-                elif item == 'desc':
-                    descOrder = True
-                if item != 'suid':
+                elif item == addArgs:
+                    addArgs[item] = True
+                else:
                     keyOrder.append(key)
+        print(keyOrder)
+        if addArgs['signed']:
+            if 'WHERE' in query:
+                query += " AND"
+            else:
+                query += " WHERE"
+            query += " a.signed = ?"
+            keyOrder.append(bool(kwargs.get('signed')))
         if "GROUP BY" in query:
             query += ", a.uid"
         else:
             query += " GROUP BY a.uid"
-        if doOrder:
+        if addArgs['order']:
             query += " ORDER BY "
             keyOrder.remove(kwargs.get('order'))
             orderArray = str(kwargs.get('order')).split('|')
@@ -187,10 +185,10 @@ class api:
                     query += filterMapping[item]
                 else:
                     return jsonError(400, "invalid order type")
-            if descOrder:
+            if addArgs['desc']:
                 keyOrder.remove(kwargs.get('desc'))
                 query += " DESC"
-        if addLim:
+        if addArgs['limit']:
             if int(kwargs.get('limit')) < 1:
                 return jsonError(400, "limit cannot be negative or 0")
             query += " LIMIT ?"
@@ -205,6 +203,8 @@ class api:
             query += " LIMIT ?"
             keyOrder.append(arguments.limit)
 
+        print(query)
+        print(keyOrder)
         cursor.execute(query, keyOrder)
         results = cursor.fetchall()
 
@@ -225,7 +225,8 @@ class api:
                             'userid': userid,
                             'valid': valid
                         })
-            row_list.insert(6, pInfo)   
+            row_list.insert(6, pInfo)
+            row_list[7] = bool(row_list[7])
             row_list[8] = str(row_list[8])
             row_list[9] = {'formatted': row_list[9], 'unformatted': row_list[10]}
             row_list.remove(row_list[10])
