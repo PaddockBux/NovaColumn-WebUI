@@ -78,7 +78,7 @@ class api:
             'motd': 'm.utext',
             'version': 'v.text',
             'protocol': 'a.protocol',
-            'icon_id': 'a.icon_fk',
+            'icon': 'a.icon_fk',
             'online': 'o.online',
             'random': 'RAND()'
         }
