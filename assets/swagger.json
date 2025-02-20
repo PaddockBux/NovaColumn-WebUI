@@ -113,7 +113,7 @@
               "schema": {
                 "type": "string"
               },
-              "description": "Order the results - Supports all arguments except for `limit`, `desc`, and `suid`"
+              "description": "Order the results returned - Supports all arguments except for `limit` and `desc`"
             },
             {
               "name": "desc",
@@ -121,7 +121,7 @@
               "schema": {
                 "type": "string"
               },
-              "description": "Change the order of the results to descending instead of the default ascending (only applies when `order` is used)"
+              "description": "Change the order of the results to descending instead of the default ascending (only applies when `order` is used) - If the argument is set to anything, it is interpreted as true, otherwise if empty, false"
             }
           ],
           "responses": {
@@ -242,7 +242,7 @@
               "content": {
                 "image/png": {
                   "schema": {
-                    "type": "image",
+                    "type": "string",
                     "format": "binary"
                   }
                 },
